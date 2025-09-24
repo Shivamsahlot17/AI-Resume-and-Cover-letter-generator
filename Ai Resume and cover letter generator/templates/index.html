@@ -1,0 +1,247 @@
+<!-- cd "C:\Users\shiva\OneDrive\Desktop\CODING\projects\Ai Resume and cover letter generator" -->
+  <!-- python app.py -->
+   <!-- http://127.0.0.1:5000 -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume & Cover Letter Generator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h1>AI Resume & Cover Letter Generator</h1>
+        <p class="subtitle">Create professional application documents in minutes.</p>
+        
+        <form id="resume-form" action="/generate" method="post" enctype="multipart/form-data">
+            
+            <fieldset>
+                <legend>Personal Information</legend>
+                <input type="text" id="name" placeholder="Full Name" required>
+                <input type="text" id="contact_info" placeholder="Phone, Email, LinkedIn URL (comma-separated)" required>
+            </fieldset>
+
+            <fieldset>
+                <legend>Work Experience</legend>
+                <div id="work-experience-container"></div>
+                <button type="button" class="add-btn" onclick="addWorkExperience()">+ Add Work Experience</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>Education</legend>
+                <div id="education-container"></div>
+                <button type="button" class="add-btn" onclick="addEducation()">+ Add Education</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>Projects</legend>
+                <div id="projects-container"></div>
+                <button type="button" class="add-btn" onclick="addProject()">+ Add Project</button>
+            </fieldset>
+            
+            <fieldset>
+                <legend>Skills</legend>
+                <input type="text" id="skills" placeholder="Comma-separated skills (e.g., Python, Project Management)">
+            </fieldset>
+
+            <fieldset>
+                <legend>Certifications (Optional)</legend>
+                <div id="certifications-container"></div>
+                <button type="button" class="add-btn" onclick="addCertification()">+ Add Certification</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>Achievements (Optional)</legend>
+                <div id="achievements-container"></div>
+                <button type="button" class="add-btn" onclick="addAchievement()">+ Add Achievement</button>
+            </fieldset>
+
+            <fieldset>
+                <legend>AI Professional Summary</legend>
+                <p>Click the button to generate a summary based on your experience and skills.</p>
+                <button type="button" id="ai-summary-btn" class="ai-btn">✨ Generate AI Summary</button>
+                <textarea id="summary" rows="5" placeholder="Your AI-generated summary will appear here..." required></textarea>
+            </fieldset>
+
+            <fieldset>
+                <legend>Resume Design &amp; Final Touches</legend>
+                <div class="form-group-inline">
+                    <label for="template">Select a Template:</label>
+                    <select id="template">
+                        <option value="classic">Classic</option>
+                        <option value="modern">Modern</option>
+                        <option value="creative">Creative</option>
+                    </select>
+                </div>
+                <div class="form-group-inline">
+                    <label for="profilePhoto">Profile Photo (Optional):</label>
+                    <input type="file" id="profilePhoto" name="profilePhoto" accept="image/*">
+                </div>
+            </fieldset>
+            
+            <input type="hidden" id="resumeData" name="resumeData">
+            <button type="submit" class="submit-btn">Download Resume PDF</button>
+        </form>
+
+        <div class="cover-letter-section">
+            <h2>Cover Letter Generator</h2>
+            <fieldset>
+                <legend>Job Details</legend>
+                <input type="text" id="companyName" placeholder="Company Name" required>
+                <div class="form-group-inline">
+                    <label for="coverLetterTone">Select a Tone:</label>
+                    <select id="coverLetterTone">
+                        <option value="Professional">Professional</option>
+                        <option value="Enthusiastic">Enthusiastic</option>
+                        <option value="Formal">Formal</option>
+                    </select>
+                </div>
+                <textarea id="jobDescription" rows="8" placeholder="Paste the full job description here..." required></textarea>
+                <button type="button" id="ai-cover-letter-btn" class="ai-btn">✨ Generate AI Cover Letter</button>
+            </fieldset>
+            <div id="cover-letter-result" class="hidden">
+                <fieldset>
+                    <legend>Generated Cover Letter</legend>
+                    <textarea id="coverLetterText" rows="15"></textarea>
+                    <button type="button" id="download-cl-btn" class="submit-btn">Download Cover Letter PDF</button>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- Dynamic Field Functions ---
+    function addWorkExperience() {
+        const container = document.getElementById('work-experience-container');
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'form-group work-entry';
+        entryDiv.innerHTML = `
+            <div class="form-group-header">
+                <input type="text" class="job-title" placeholder="Job Title" required>
+                <button type="button" class="improvise-btn" onclick="improviseSection(this)">✨ Improvise</button>
+            </div>
+            <input type="text" class="company" placeholder="Company" required>
+            <input type="text" class="dates" placeholder="Dates of Employment" required>
+            <textarea class="responsibilities" rows="4" placeholder="Key Responsibilities (one per line)"></textarea>
+            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        container.appendChild(entryDiv);
+    }
+
+    // <<< CORRECTED FUNCTION >>>
+    function addEducation() {
+        const container = document.getElementById('education-container');
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'form-group education-entry';
+        entryDiv.innerHTML = `
+            <input type="text" class="degree" placeholder="Degree (e.g., B.S. in Computer Science)" required>
+            <input type="text" class="institution" placeholder="Institution" required>
+            <input type="text" class="years" placeholder="Years Attended" required>
+            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        container.appendChild(entryDiv);
+    }
+
+    // <<< CORRECTED FUNCTION >>>
+    function addProject() {
+        const container = document.getElementById('projects-container');
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'form-group project-entry';
+        entryDiv.innerHTML = `
+            <div class="form-group-header">
+                <input type="text" class="project-title" placeholder="Project Title" required>
+                <button type="button" class="improvise-btn" onclick="improviseSection(this)">✨ Improvise</button>
+            </div>
+            <textarea class="project-description" rows="3" placeholder="Project Description (one point per line)"></textarea>
+            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        container.appendChild(entryDiv);
+    }
+    
+    function addCertification() {
+        const container = document.getElementById('certifications-container');
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'form-group certification-entry';
+        entryDiv.innerHTML = `
+            <input type="text" class="certification-name" placeholder="Certificate Name, Issuing Body, and Date">
+            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        container.appendChild(entryDiv);
+    }
+
+    function addAchievement() {
+        const container = document.getElementById('achievements-container');
+        const entryDiv = document.createElement('div');
+        entryDiv.className = 'form-group achievement-entry';
+        entryDiv.innerHTML = `
+            <input type="text" class="achievement-description" placeholder="Describe your achievement">
+            <button type="button" class="remove-btn" onclick="this.parentElement.remove()">Remove</button>
+        `;
+        container.appendChild(entryDiv);
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        addWorkExperience();
+        addEducation();
+        addProject();
+    });
+    
+    async function improviseSection(button) {
+        const parentGroup = button.closest('.form-group');
+        const textarea = parentGroup.querySelector('textarea');
+        if (!textarea.value.trim()) {
+            alert("Please write some points before improvising.");
+            return;
+        }
+        button.disabled = true;
+        button.textContent = '...';
+        try {
+            const response = await fetch('/improvise-section', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: textarea.value })
+            });
+            if (!response.ok) { const err = await response.json(); throw new Error(err.error || 'Server error'); }
+            const data = await response.json();
+            textarea.value = data.improved_content.join('\\n');
+        } catch (error) {
+            alert(`Could not improvise text: ${error.message}`);
+        } finally {
+            button.disabled = false;
+            button.textContent = '✨ Improvise';
+        }
+    }
+
+    function collectResumeData() {
+        const resumeData = {
+            name: document.getElementById('name').value,
+            contact_info: document.getElementById('contact_info').value,
+            summary: document.getElementById('summary').value,
+            template: document.getElementById('template').value,
+            skills: document.getElementById('skills').value.split(',').map(s => s.trim()),
+            experience: [], education: [], projects: [], certifications: [], achievements: []
+        };
+        document.querySelectorAll('.work-entry').forEach(e => resumeData.experience.push({ job_title: e.querySelector('.job-title').value, company: e.querySelector('.company').value, dates: e.querySelector('.dates').value, responsibilities: e.querySelector('.responsibilities').value.split('\\n').map(r => r.trim()).filter(r => r) }));
+        document.querySelectorAll('.education-entry').forEach(e => resumeData.education.push({ degree: e.querySelector('.degree').value, institution: e.querySelector('.institution').value, years: e.querySelector('.years').value }));
+        document.querySelectorAll('.project-entry').forEach(e => resumeData.projects.push({ title: e.querySelector('.project-title').value, description: e.querySelector('.project-description').value }));
+        document.querySelectorAll('.certification-entry').forEach(e => { const v = e.querySelector('.certification-name').value; if (v) resumeData.certifications.push(v); });
+        document.querySelectorAll('.achievement-entry').forEach(e => { const v = e.querySelector('.achievement-description').value; if (v) resumeData.achievements.push(v); });
+        return resumeData;
+    }
+
+    // --- All other script parts (AI summary, cover letter, downloads) remain the same ---
+    document.getElementById('ai-summary-btn').addEventListener('click', async () => { /* ... */ });
+    document.getElementById('ai-cover-letter-btn').addEventListener('click', async () => { /* ... */ });
+    document.getElementById('resume-form').addEventListener('submit', function(event) {
+        document.getElementById('resumeData').value = JSON.stringify(collectResumeData());
+    });
+    document.getElementById('download-cl-btn').addEventListener('click', async () => { /* ... */ });
+</script>
+</body>
+</html>
